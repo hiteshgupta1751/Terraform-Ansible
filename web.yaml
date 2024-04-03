@@ -1,0 +1,34 @@
+---
+- name: configure webserver and adding user
+  hosts: all
+  gather_facts: no
+  tasks:
+      - name: adding user "{{ new_user }}"
+        user:
+            name: "{{ new_user }}"
+            state: present
+      - name: Install packages
+        yum:
+            name:
+                - httpd
+                - unzip
+            state: present
+      - name: enabled httpd service
+        service:
+            name: httpd
+            state: started
+            enabled: true
+      - name: adding content
+        copy:
+            src: "/root/terraform/content/"
+            dest: "/var/www/html"
+      - name: Download carvilla.zip
+      get_url:
+        url: "https://www.free-css.com/assets/files/free-css-templates/download/page296/carvilla.zip"
+        dest: "/tmp/carvilla.zip"
+
+    - name: Unzip carvilla.zip
+      unarchive:
+        src: "/tmp/carvilla.zip"
+        dest: "/var/www/html"
+        remote_src: yes
