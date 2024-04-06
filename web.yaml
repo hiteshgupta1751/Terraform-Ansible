@@ -1,34 +1,30 @@
 ---
-- name: configure webserver and adding user
+- name: configure apache webserver 
   hosts: all
   gather_facts: no
   tasks:
-      - name: adding user "{{ new_user }}"
-        user:
-            name: "{{ new_user }}"
-            state: present
-      - name: Install packages
+      - name: Install apache
         yum:
-            name:
-                - httpd
-                - unzip
+            name: httpd
             state: present
       - name: enabled httpd service
         service:
             name: httpd
             state: started
             enabled: true
-      - name: adding content
-        copy:
-            src: "/root/terraform/content/"
-            dest: "/var/www/html"
-      - name: Download carvilla.zip
-      get_url:
-        url: "https://www.free-css.com/assets/files/free-css-templates/download/page296/carvilla.zip"
-        dest: "/tmp/carvilla.zip"
+      - name: remove html directory
+        file:
+            path: "/var/www/html"
+            state: absent
+      - name: synchronize a directory from the local to the remote machine
+        synchronize:
+            src: html
+            dest: /var/www/
+            recursive: yes
+        notify: Restart apache
 
-    - name: Unzip carvilla.zip
-      unarchive:
-        src: "/tmp/carvilla.zip"
-        dest: "/var/www/html"
-        remote_src: yes
+  handlers:
+      - name: Restart apache
+        service:
+            name: httpd
+            state: restarted
