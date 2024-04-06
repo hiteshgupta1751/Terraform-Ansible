@@ -18,7 +18,7 @@
             state: absent
       - name: synchronize a directory from the local to the remote machine
         synchronize:
-            src: html
+            src: /root/terraform/html
             dest: /var/www/
             recursive: yes
         notify: Restart apache
