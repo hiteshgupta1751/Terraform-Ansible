@@ -11,7 +11,7 @@ resource "aws_instance" "web1" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${aws_instance.web1.public_ip} "
+    command = "echo ${aws_instance.web1.public_ip} >> /root/terraform/inventory "
   }
   provisioner "local-exec" {
     command = "sleep 10"
